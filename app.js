@@ -4,6 +4,7 @@ createApp({
   data() {
     return {
       lessons: [],
+      cart: [],
       loading: true,
       error: '',
       baseUrl: 'https://m00999082-after-school.onrender.com',
@@ -12,6 +13,12 @@ createApp({
     };
   },
   methods: {
+    addToCart(lesson) {
+      if (lesson.space > 0) {
+        this.cart.push(lesson._id);
+        lesson.space -= 1;
+      }
+    },
     async fetchLessons() {
       try {
         const response = await fetch(this.baseUrl + '/lessons');

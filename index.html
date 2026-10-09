@@ -59,6 +59,13 @@
               <i class="fa-solid fa-users" aria-hidden="true"></i>
               {{ lesson.space }} spaces
             </p>
+            <button
+              type="button"
+              @click="addToCart(lesson)"
+              :disabled="lesson.space <= 0"
+            >
+              Add to Cart
+            </button>
           </article>
         </section>
       </main>
