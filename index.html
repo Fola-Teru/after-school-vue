@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Browse after-school lessons" />
+    <title>After-School Lessons</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <main class="lessons-page">
+        <h1>After-School Lessons</h1>
+
+        <p v-if="loading" role="status">Loading lessons...</p>
+        <p v-else-if="error" class="error" role="alert">{{ error }}</p>
+        <p v-else-if="lessons.length === 0">No lessons are available.</p>
+
+        <section v-else class="lesson-list" aria-label="Available lessons">
+          <article
+            v-for="lesson in lessons"
+            :key="lesson._id"
+            class="lesson-card"
+          >
+            <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
+            <h2>{{ lesson.topic }}</h2>
+            <p v-if="lesson.location">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              {{ lesson.location }}
+            </p>
+            <p v-if="lesson.price !== undefined">
+              <i class="fa-solid fa-tag" aria-hidden="true"></i>
+              {{ lesson.price }}
+            </p>
+            <p v-if="lesson.space !== undefined">
+              <i class="fa-solid fa-users" aria-hidden="true"></i>
+              {{ lesson.space }} spaces
+            </p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

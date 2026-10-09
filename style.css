@@ -1,0 +1,43 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: #1f2937;
+  background: #f3f4f6;
+  font-family: Arial, sans-serif;
+}
+
+.lessons-page {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.lesson-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.lesson-card {
+  padding: 1.25rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.lesson-card h2 {
+  margin-top: 0;
+}
+
+.lesson-card p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error {
+  color: #b91c1c;
+}
