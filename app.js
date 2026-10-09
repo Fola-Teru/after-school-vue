@@ -6,7 +6,9 @@ createApp({
       lessons: [],
       loading: true,
       error: '',
-      baseUrl: 'https://m00999082-after-school.onrender.com'
+      baseUrl: 'https://m00999082-after-school.onrender.com',
+      sortBy: 'topic',
+      sortOrder: 'asc'
     };
   },
   methods: {
@@ -23,6 +25,17 @@ createApp({
       } finally {
         this.loading = false;
       }
+    }
+  },
+  computed: {
+    sortedLessons() {
+      const lessons = [...this.lessons];
+      return lessons.sort((a, b) => {
+        const result = ['price', 'space'].includes(this.sortBy)
+          ? a[this.sortBy] - b[this.sortBy]
+          : a[this.sortBy].localeCompare(b[this.sortBy]);
+        return this.sortOrder === 'desc' ? result * -1 : result;
+      });
     }
   },
   created() {

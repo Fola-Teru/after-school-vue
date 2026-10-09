@@ -16,13 +16,32 @@
       <main class="lessons-page">
         <h1>After-School Lessons</h1>
 
+        <div class="sort-controls">
+          <label>
+            Sort by
+            <select v-model="sortBy">
+              <option value="topic">Subject</option>
+              <option value="location">Location</option>
+              <option value="price">Price</option>
+              <option value="space">Spaces</option>
+            </select>
+          </label>
+          <label>
+            Order
+            <select v-model="sortOrder">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </label>
+        </div>
+
         <p v-if="loading" role="status">Loading lessons...</p>
         <p v-else-if="error" class="error" role="alert">{{ error }}</p>
         <p v-else-if="lessons.length === 0">No lessons are available.</p>
 
         <section v-else class="lesson-list" aria-label="Available lessons">
           <article
-            v-for="lesson in lessons"
+            v-for="lesson in sortedLessons"
             :key="lesson._id"
             class="lesson-card"
           >
