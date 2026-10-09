@@ -14,58 +14,91 @@
   <body>
     <div id="app">
       <main class="lessons-page">
-        <h1>After-School Lessons</h1>
+        <header class="page-header">
+          <h1>After-School Lessons</h1>
+          <button
+            type="button"
+            @click="toggleCart"
+            :disabled="cart.length === 0"
+          >
+            {{ showCart ? 'Back to lessons' : 'Cart (' + cart.length + ')' }}
+          </button>
+        </header>
 
-        <div class="sort-controls">
-          <label>
-            Sort by
-            <select v-model="sortBy">
-              <option value="topic">Subject</option>
-              <option value="location">Location</option>
-              <option value="price">Price</option>
-              <option value="space">Spaces</option>
-            </select>
-          </label>
-          <label>
-            Order
-            <select v-model="sortOrder">
-              <option value="asc">Ascending</option>
-              <option value="desc">Descending</option>
-            </select>
-          </label>
+        <div v-if="!showCart">
+          <div class="sort-controls">
+            <label>
+              Sort by
+              <select v-model="sortBy">
+                <option value="topic">Subject</option>
+                <option value="location">Location</option>
+                <option value="price">Price</option>
+                <option value="space">Spaces</option>
+              </select>
+            </label>
+            <label>
+              Order
+              <select v-model="sortOrder">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </label>
+          </div>
+
+          <p v-if="loading" role="status">Loading lessons...</p>
+          <p v-else-if="error" class="error" role="alert">{{ error }}</p>
+          <p v-else-if="lessons.length === 0">No lessons are available.</p>
+
+          <section v-else class="lesson-list" aria-label="Available lessons">
+            <article
+              v-for="lesson in sortedLessons"
+              :key="lesson._id"
+              class="lesson-card"
+            >
+              <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
+              <h2>{{ lesson.topic }}</h2>
+              <p v-if="lesson.location">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                {{ lesson.location }}
+              </p>
+              <p v-if="lesson.price !== undefined">
+                <i class="fa-solid fa-tag" aria-hidden="true"></i>
+                {{ lesson.price }}
+              </p>
+              <p v-if="lesson.space !== undefined">
+                <i class="fa-solid fa-users" aria-hidden="true"></i>
+                {{ lesson.space }} spaces
+              </p>
+              <button
+                type="button"
+                @click="addToCart(lesson)"
+                :disabled="lesson.space <= 0"
+              >
+                Add to Cart
+              </button>
+            </article>
+          </section>
         </div>
 
-        <p v-if="loading" role="status">Loading lessons...</p>
-        <p v-else-if="error" class="error" role="alert">{{ error }}</p>
-        <p v-else-if="lessons.length === 0">No lessons are available.</p>
-
-        <section v-else class="lesson-list" aria-label="Available lessons">
+        <section v-else class="cart-page" aria-label="Shopping cart">
+          <h2>Your Cart</h2>
+          <p v-if="cart.length === 0">Your cart is empty.</p>
           <article
-            v-for="lesson in sortedLessons"
-            :key="lesson._id"
-            class="lesson-card"
+            v-for="(item, index) in cartItems"
+            :key="index"
+            class="lesson-card cart-item"
           >
-            <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
-            <h2>{{ lesson.topic }}</h2>
-            <p v-if="lesson.location">
+            <i :class="['fa-solid', item.icon]" aria-hidden="true"></i>
+            <h3>{{ item.topic }}</h3>
+            <p v-if="item.location">
               <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-              {{ lesson.location }}
+              {{ item.location }}
             </p>
-            <p v-if="lesson.price !== undefined">
+            <p v-if="item.price !== undefined">
               <i class="fa-solid fa-tag" aria-hidden="true"></i>
-              {{ lesson.price }}
+              {{ item.price }}
             </p>
-            <p v-if="lesson.space !== undefined">
-              <i class="fa-solid fa-users" aria-hidden="true"></i>
-              {{ lesson.space }} spaces
-            </p>
-            <button
-              type="button"
-              @click="addToCart(lesson)"
-              :disabled="lesson.space <= 0"
-            >
-              Add to Cart
-            </button>
+            <button type="button" @click="removeFromCart(index)">Remove</button>
           </article>
         </section>
       </main>

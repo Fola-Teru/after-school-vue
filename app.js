@@ -5,6 +5,7 @@ createApp({
     return {
       lessons: [],
       cart: [],
+      showCart: false,
       loading: true,
       error: '',
       baseUrl: 'https://m00999082-after-school.onrender.com',
@@ -17,6 +18,20 @@ createApp({
       if (lesson.space > 0) {
         this.cart.push(lesson._id);
         lesson.space -= 1;
+      }
+    },
+    toggleCart() {
+      this.showCart = !this.showCart;
+    },
+    removeFromCart(index) {
+      const lessonId = this.cart[index];
+      const lesson = this.lessons.find(item => item._id === lessonId);
+      if (lesson) {
+        lesson.space += 1;
+      }
+      this.cart.splice(index, 1);
+      if (this.cart.length === 0) {
+        this.showCart = false;
       }
     },
     async fetchLessons() {
@@ -35,6 +50,11 @@ createApp({
     }
   },
   computed: {
+    cartItems() {
+      return this.cart
+        .map(id => this.lessons.find(lesson => lesson._id === id))
+        .filter(Boolean);
+    },
     sortedLessons() {
       const lessons = [...this.lessons];
       return lessons.sort((a, b) => {
