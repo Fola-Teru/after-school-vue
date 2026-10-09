@@ -1,46 +1,85 @@
+:root {
+  --primary: #4f46e5;
+  --bg: #f4f5f9;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  color: #1f2937;
-  background: #f3f4f6;
-  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
 }
 
 .lessons-page {
-  width: min(100% - 2rem, 1100px);
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 1.5rem;
 }
 
-.page-header {
+.top-bar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.page-header h1 {
+.top-bar h1 {
   margin: 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.toolbar label,
+.checkout-form label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+}
+
+.toolbar select,
+.checkout-form input {
+  min-height: 2.5rem;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: var(--text);
+  background: var(--card);
 }
 
 .lesson-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
 }
 
 .lesson-card {
   padding: 1.25rem;
-  background: #fff;
-  border-radius: 0.5rem;
+  background: var(--card);
+  border-radius: 12px;
   box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  transition: transform 0.15s;
 }
 
-.lesson-card h2 {
-  margin-top: 0;
+.lesson-card:hover {
+  transform: translateY(-3px);
+}
+
+.lesson-card h2,
+.lesson-card h3 {
+  margin-top: 0.75rem;
 }
 
 .lesson-card p {
@@ -49,22 +88,78 @@ body {
   gap: 0.5rem;
 }
 
+.lesson-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--primary);
+  font-size: 1.25rem;
+}
+
+.spaces-badge {
+  display: inline-flex;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: var(--primary);
+  font-size: 0.875rem;
+}
+
+.low {
+  color: #b45309;
+  background: #fef3c7;
+  font-weight: 600;
+}
+
+.cart-page {
+  display: grid;
+  gap: 1rem;
+}
+
 .checkout-form {
   display: grid;
   max-width: 28rem;
   gap: 0.5rem;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
 }
 
-.checkout-form label {
-  display: grid;
-  gap: 0.35rem;
+button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--primary);
+  cursor: pointer;
 }
 
-.checkout-form input {
-  padding: 0.5rem;
+.add-to-cart {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+button:disabled {
+  color: #64748b;
+  background: #cbd5e1;
+  cursor: not-allowed;
 }
 
 .error {
   color: #b91c1c;
+}
+
+@media (max-width: 480px) {
+  .lessons-page {
+    padding: 1rem;
+  }
+
+  .top-bar {
+    align-items: flex-start;
+  }
+
+  .top-bar h1 {
+    font-size: 1.5rem;
+  }
 }

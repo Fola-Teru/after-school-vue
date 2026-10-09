@@ -15,7 +15,7 @@
     <div id="app">
       <main class="lessons-page">
         <p v-if="orderMessage" role="status">{{ orderMessage }}</p>
-        <header class="page-header">
+        <header class="top-bar">
           <h1>After-School Lessons</h1>
           <button
             type="button"
@@ -27,7 +27,7 @@
         </header>
 
         <div v-if="!showCart">
-          <div class="sort-controls">
+          <div class="toolbar">
             <label>
               Sort by
               <select v-model="sortBy">
@@ -56,7 +56,9 @@
               :key="lesson._id"
               class="lesson-card"
             >
-              <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
+              <div class="lesson-icon">
+                <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
+              </div>
               <h2>{{ lesson.topic }}</h2>
               <p v-if="lesson.location">
                 <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
@@ -66,7 +68,11 @@
                 <i class="fa-solid fa-tag" aria-hidden="true"></i>
                 {{ lesson.price }}
               </p>
-              <p v-if="lesson.space !== undefined">
+              <p
+                v-if="lesson.space !== undefined"
+                class="spaces-badge"
+                :class="{ low: lesson.space <= 2 }"
+              >
                 <i class="fa-solid fa-users" aria-hidden="true"></i>
                 {{ lesson.space }} spaces
               </p>
@@ -74,6 +80,7 @@
                 type="button"
                 @click="addToCart(lesson)"
                 :disabled="lesson.space <= 0"
+                class="add-to-cart"
               >
                 Add to Cart
               </button>
