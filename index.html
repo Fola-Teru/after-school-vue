@@ -14,15 +14,23 @@
   <body>
     <div id="app">
       <main class="lessons-page">
-        <p v-if="orderMessage" role="status">{{ orderMessage }}</p>
+        <p
+          v-if="orderMessage"
+          class="order-message"
+          :class="{ success: orderMessage.startsWith('Order submitted') }"
+          role="status"
+        >
+          {{ orderMessage }}
+        </p>
         <header class="top-bar">
-          <h1>After-School Lessons</h1>
-          <button
-            type="button"
-            @click="toggleCart"
-            :disabled="cart.length === 0"
-          >
-            {{ showCart ? 'Back to lessons' : 'Cart (' + cart.length + ')' }}
+          <div class="brand">
+            <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+            <h1>After-School Lessons</h1>
+          </div>
+          <button class="cart-btn" type="button" @click="toggleCart" :disabled="cart.length === 0">
+            <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+            {{ showCart ? 'Back to lessons' : 'Cart' }}
+            <span class="count" v-if="!showCart">{{ cart.length }}</span>
           </button>
         </header>
 
@@ -55,78 +63,131 @@
               v-for="lesson in sortedLessons"
               :key="lesson._id"
               class="lesson-card"
+              :class="{ soldout: lesson.space === 0 }"
             >
-              <div class="lesson-icon">
-                <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
+              <div class="card-top">
+                <span class="lesson-icon">
+                  <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
+                </span>
+                <span
+                  class="badge"
+                  :class="{ low: lesson.space > 0 && lesson.space <= 2, out: lesson.space === 0 }"
+                >
+                  {{ lesson.space === 0 ? 'Sold out' : lesson.space + ' spaces left' }}
+                </span>
               </div>
               <h2>{{ lesson.topic }}</h2>
-              <p v-if="lesson.location">
+              <p class="meta">
                 <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
                 {{ lesson.location }}
               </p>
-              <p v-if="lesson.price !== undefined">
-                <i class="fa-solid fa-tag" aria-hidden="true"></i>
-                {{ lesson.price }}
-              </p>
-              <p
-                v-if="lesson.space !== undefined"
-                class="spaces-badge"
-                :class="{ low: lesson.space <= 2 }"
-              >
-                <i class="fa-solid fa-users" aria-hidden="true"></i>
-                {{ lesson.space }} spaces
-              </p>
-              <button
-                type="button"
-                @click="addToCart(lesson)"
-                :disabled="lesson.space <= 0"
-                class="add-to-cart"
-              >
-                Add to Cart
-              </button>
+              <div class="card-bottom">
+                <span class="price">£{{ lesson.price }}</span>
+                <button
+                  class="add-btn"
+                  type="button"
+                  @click="addToCart(lesson)"
+                  :disabled="lesson.space <= 0"
+                >
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i> Add to Cart
+                </button>
+              </div>
             </article>
           </section>
         </div>
 
-        <section v-else class="cart-page" aria-label="Shopping cart">
-          <h2>Your Cart</h2>
-          <p v-if="cart.length === 0">Your cart is empty.</p>
-          <article
-            v-for="(item, index) in cartItems"
-            :key="index"
-            class="lesson-card cart-item"
-          >
-            <i :class="['fa-solid', item.icon]" aria-hidden="true"></i>
-            <h3>{{ item.topic }}</h3>
-            <p v-if="item.location">
-              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-              {{ item.location }}
-            </p>
-            <p v-if="item.price !== undefined">
-              <i class="fa-solid fa-tag" aria-hidden="true"></i>
-              {{ item.price }}
-            </p>
-            <button type="button" @click="removeFromCart(index)">Remove</button>
-          </article>
-          <div class="checkout-form">
-            <label>
-              Name
-              <input v-model="name" type="text" autocomplete="name" />
-            </label>
-            <small v-if="name && !nameValid" class="error">
-              Enter a name using letters and single spaces only.
-            </small>
-            <label>
-              Phone
-              <input v-model="phone" type="tel" autocomplete="tel" />
-            </label>
-            <small v-if="phone && !phoneValid" class="error">
-              Enter a phone number using digits only.
-            </small>
-            <button type="button" @click="checkout" :disabled="!formValid">
-              Checkout
-            </button>
+        <section v-else class="cart-layout" aria-label="Shopping cart">
+          <div class="cart-items">
+            <h2>
+              Your Cart
+              <span class="muted">
+                ({{ cart.length }} {{ cart.length === 1 ? 'space' : 'spaces' }})
+              </span>
+            </h2>
+            <p v-if="cart.length === 0">Your cart is empty.</p>
+            <article
+              v-for="(item, index) in cartItems"
+              :key="index"
+              class="cart-row"
+            >
+              <i :class="['fa-solid', item.icon]" aria-hidden="true"></i>
+              <div class="cart-row-details">
+                <h3>{{ item.topic }}</h3>
+                <p v-if="item.location" class="meta">{{ item.location }}</p>
+                <p class="muted">{{ item.space }} spaces left</p>
+              </div>
+              <strong class="price">£{{ item.price }}</strong>
+              <button type="button" @click="removeFromCart(index)">Remove</button>
+            </article>
           </div>
+
+          <aside class="summary">
+            <h3>Order summary</h3>
+            <div class="summary-line">
+              <span>Spaces booked</span>
+              <span>{{ cart.length }}</span>
+            </div>
+            <div class="summary-line">
+              <span>Subtotal</span>
+              <span>£{{ cartTotal }}</span>
+            </div>
+            <div class="summary-line total">
+              <span>Total</span>
+              <span>£{{ cartTotal }}</span>
+            </div>
+
+            <div class="field">
+              <label for="name">Full name</label>
+              <input
+                id="name"
+                v-model="name"
+                placeholder="e.g. Ada Lovelace"
+                autocomplete="name"
+              />
+              <small v-if="!name" class="hint">Letters only</small>
+              <small v-else-if="nameValid" class="ok">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                Looks good
+              </small>
+              <small v-else class="error">
+                <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                Letters and spaces only
+              </small>
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone number</label>
+              <input
+                id="phone"
+                v-model="phone"
+                placeholder="e.g. 0501234567"
+                inputmode="numeric"
+                autocomplete="tel"
+              />
+              <small v-if="!phone" class="hint">Numbers only</small>
+              <small v-else-if="phoneValid" class="ok">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                Looks good
+              </small>
+              <small v-else class="error">
+                <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                Digits only, no spaces or symbols
+              </small>
+            </div>
+
+            <button
+              class="checkout-btn"
+              type="button"
+              @click="checkout"
+              :disabled="!formValid"
+            >
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              Checkout · £{{ cartTotal }}
+            </button>
+            <p class="hint center" v-if="!formValid">
+              Enter a valid name and phone number to continue.
+            </p>
+          </aside>
         </section>
       </main>
     </div>

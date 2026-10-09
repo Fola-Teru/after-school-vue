@@ -84,8 +84,9 @@ createApp({
           }
         }));
 
+        const total = this.cartTotal;
         const customerName = this.name;
-        this.orderMessage = `Order submitted, thank you, ${customerName}`;
+        this.orderMessage = `Order submitted. Thank you, ${customerName}. Total: £${total}`;
         this.cart = [];
         this.name = '';
         this.phone = '';
@@ -124,6 +125,9 @@ createApp({
       return this.cart
         .map(id => this.lessons.find(lesson => lesson._id === id))
         .filter(Boolean);
+    },
+    cartTotal() {
+      return this.cartItems.reduce((sum, lesson) => sum + lesson.price, 0);
     },
     sortedLessons() {
       const lessons = [...this.lessons];
