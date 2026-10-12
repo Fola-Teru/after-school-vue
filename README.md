@@ -1,7 +1,3 @@
-1. Vue GitHub repository: 
-2. Vue GitHub Pages link:
-3. Express GitHub repository: 
-4. https://m00999082-after-school.onrender.com/lessons
 
 # CST3144 After School Classes
 
