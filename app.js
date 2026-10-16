@@ -11,12 +11,50 @@ createApp({
       orderMessage: '',
       loading: true,
       error: '',
+      searchError: '',
       baseUrl: 'https://m00999082-after-school.onrender.com',
       sortBy: 'topic',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
+      searchQuery: '',
+      matchIds: null,
+      searchTimer: null
     };
   },
   methods: {
+    onSearchInput() {
+      clearTimeout(this.searchTimer);
+      this.searchError = '';
+      this.searchTimer = setTimeout(() => this.runSearch(), 300);
+    },
+    async runSearch() {
+      const query = this.searchQuery.trim();
+      if (!query) {
+        this.matchIds = null;
+        this.searchError = '';
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          this.baseUrl + '/search?q=' + encodeURIComponent(query)
+        );
+        if (!response.ok) {
+          throw new Error(`Search failed (HTTP ${response.status})`);
+        }
+
+        const results = await response.json();
+        if (this.searchQuery.trim() !== query) {
+          return;
+        }
+        this.matchIds = results.map(lesson => lesson._id);
+        this.searchError = '';
+      } catch (error) {
+        if (this.searchQuery.trim() === query) {
+          console.error('Failed to search lessons:', error);
+          this.searchError = 'Unable to search lessons. Please try again.';
+        }
+      }
+    },
     addToCart(lesson) {
       if (lesson.space > 0) {
         this.orderMessage = '';
@@ -130,7 +168,10 @@ createApp({
       return this.cartItems.reduce((sum, lesson) => sum + lesson.price, 0);
     },
     sortedLessons() {
-      const lessons = [...this.lessons];
+      const source = this.matchIds
+        ? this.lessons.filter(lesson => this.matchIds.includes(lesson._id))
+        : this.lessons;
+      const lessons = [...source];
       return lessons.sort((a, b) => {
         const result = ['price', 'space'].includes(this.sortBy)
           ? a[this.sortBy] - b[this.sortBy]
@@ -141,5 +182,8 @@ createApp({
   },
   created() {
     this.fetchLessons();
+  },
+  beforeUnmount() {
+    clearTimeout(this.searchTimer);
   }
 }).mount('#app');

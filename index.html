@@ -23,9 +23,8 @@
           {{ orderMessage }}
         </p>
         <header class="top-bar">
-          <div class="brand">
-            <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
-            <h1>After-School Lessons</h1>
+        <div class="brand">
+          <h1>After-School Lessons</h1>
           </div>
           <button class="cart-btn" type="button" @click="toggleCart" :disabled="cart.length === 0">
             <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
@@ -52,11 +51,22 @@
                 <option value="desc">Descending</option>
               </select>
             </label>
+            <label class="search">
+              Search
+              <input
+                type="search"
+                v-model="searchQuery"
+                @input="onSearchInput"
+                placeholder="Subject, location, price..."
+              />
+            </label>
           </div>
 
           <p v-if="loading" role="status">Loading lessons...</p>
           <p v-else-if="error" class="error" role="alert">{{ error }}</p>
+          <p v-else-if="searchError" class="error" role="alert">{{ searchError }}</p>
           <p v-else-if="lessons.length === 0">No lessons are available.</p>
+          <p v-else-if="sortedLessons.length === 0">No lessons match your search.</p>
 
           <section v-else class="lesson-list" aria-label="Available lessons">
             <article
@@ -73,7 +83,7 @@
                   class="badge"
                   :class="{ low: lesson.space > 0 && lesson.space <= 2, out: lesson.space === 0 }"
                 >
-                  {{ lesson.space === 0 ? 'Sold out' : lesson.space + ' spaces left' }}
+                  {{ lesson.space === 0 ? 'Sold out' : lesson.space + ' spaces' }}
                 </span>
               </div>
               <h2>{{ lesson.topic }}</h2>
