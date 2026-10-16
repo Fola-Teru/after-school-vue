@@ -212,6 +212,17 @@ input {
   color: var(--primary);
 }
 
+.availability {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.rating {
+  margin-top: 0.25rem;
+  color: #f59e0b;
+}
+
 .card-bottom {
   display: flex;
   justify-content: space-between;

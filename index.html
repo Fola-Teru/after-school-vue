@@ -81,6 +81,11 @@
                 <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
                 {{ lesson.location }}
               </p>
+              <p class="availability"><span v-if="lesson.space === 0">All out!</span><span v-else-if="lesson.space < 5">Only {{ lesson.space }} left!</span><span v-else>Buy now!</span></p>
+              <div class="rating" aria-label="Rating">
+                <i class="fa-solid fa-star" v-for="n in (lesson.rating || 0)" :key="'f' + n"></i>
+                <i class="fa-regular fa-star" v-for="n in (5 - (lesson.rating || 0))" :key="'e' + n"></i>
+              </div>
               <div class="card-bottom">
                 <span class="price">£{{ lesson.price }}</span>
                 <button
