@@ -75,6 +75,13 @@
               class="lesson-card"
               :class="{ soldout: lesson.space === 0 }"
             >
+              <img
+                v-if="lesson.image && !lesson.imageFailed"
+                class="lesson-photo"
+                :src="baseUrl + '/images/' + lesson.image"
+                :alt="lesson.topic"
+                @error="lesson.imageFailed = true"
+              />
               <div class="card-top">
                 <span class="lesson-icon">
                   <i :class="['fa-solid', lesson.icon]" aria-hidden="true"></i>
